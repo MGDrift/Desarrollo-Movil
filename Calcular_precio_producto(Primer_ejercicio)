@@ -1,0 +1,54 @@
+class product{
+    int productPrice;
+    double productDiscount;
+    int ivaProduct;
+  
+  product(this.productPrice, this.productDiscount, this.ivaProduct);
+    
+  }
+
+void main() {
+  
+  List<Map<String, dynamic>> products = [
+    {
+      'productPrice': 20000,
+      'productDiscount': 0.2,
+      'IvaProduct': 0.19,
+      'title' : 'cafe'
+    },
+    {
+      'productPrice': 12000,
+      'productDiscount': 0.1,
+      'IvaProduct': 0.15,
+      'title' : 'shampoo'
+    },
+    {
+      'productPrice': 5000,
+      'productDiscount': 0.3,
+      'IvaProduct': 0.22,
+      'title' : 'queso'
+    }
+  ];
+  
+  if (products[0]['title'] == 'cafe'){
+    double priceWithIVA = (products[0]['productPrice']+(products[0] ['productPrice']*products[0]['IvaProduct']));
+    double discount = (products[0]['productPrice']*products[0]['productDiscount']);
+    double finalPrice = priceWithIVA - discount;
+    print('El precio del producto 1 es:  $finalPrice') ;
+  }
+  
+  if (products[1]['title'] == 'shampoo'){
+    double priceWithIVA = (products[1]['productPrice']+(products[1] ['productPrice']*products[1]['IvaProduct']));
+    double discount = (products[1]['productPrice']*products[1]['productDiscount']);
+    double finalPrice = priceWithIVA - discount;
+    print('El precio del producto 2 es:  $finalPrice') ;
+  }
+  
+  if (products[2]['title'] == 'queso'){
+    double priceWithIVA = (products[2]['productPrice']+(products[2] ['productPrice']*products[2]['IvaProduct']));
+    double discount = (products[2]['productPrice']*products[2]['productDiscount']);
+    double finalPrice = priceWithIVA - discount;
+    print('El precio del producto 3 es:  $finalPrice') ;
+  }
+  
+}
