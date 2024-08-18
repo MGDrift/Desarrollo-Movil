@@ -1,0 +1,96 @@
+import 'dart:convert';
+import 'dart:html' as html; // Usamos `dart:html` para solicitudes HTTP
+
+// Clase Character para modelar la información de un personaje
+class Character {
+  final int id;
+  final String name;
+  final String status;
+  final String species;
+  final String image;
+
+  Character({
+    required this.id,
+    required this.name,
+    required this.status,
+    required this.species,
+    required this.image,
+  });
+
+  // Método para convertir JSON a un objeto Character
+  //Este método extrae la información de la url y la convierte en un map de tipo json, luego lo convierte en una intancia del nombre del metodo (Osea character en este caso) y extrae los valores por laas claves requeridas por el constructor
+  factory Character.fromJson(Map<String, dynamic> json) {
+    return Character(
+      id: json['id'],
+      name: json['name'],
+      status: json['status'],
+      species: json['species'],
+      image: json['image'],
+    );
+  }
+}
+
+// Mixin para formatear la información del Character
+//Extrae el nombre del personaje y lo pone en mayusculas, luego lo retorna con el string "character" para mejor legibilidad.
+mixin CharacterFormatter {
+  String formattedName(String name) {
+    return 'Character: ${name.toUpperCase()}';
+  }
+
+  //Aquí hace lo mismo pero con las claves de status y species
+  String statusAndSpecies(String status, String species) {
+    return 'Status: $status, Species: $species';
+  }
+}
+
+// Clase que combina la lógica del Character con el mixin
+// El siguiente método hereda de "character" y además se genera acceso de los métodos por medio de "CharacterFormatter"
+class CharacterWithFormatting extends Character with CharacterFormatter {
+  CharacterWithFormatting({
+    required int id,
+    required String name,
+    required String status,
+    required String species,
+    required String image,
+  }) : super(id: id, name: name, status: status, species: species, image: image);
+
+  // Método `fromJson` para CharacterWithFormatting
+  //Similar al "character" pero retorna una instancia de tipo "CharacterWithFormatting".
+  factory CharacterWithFormatting.fromJson(Map<String, dynamic> json) {
+    return CharacterWithFormatting(
+      id: json['id'],
+      name: json['name'],
+      status: json['status'],
+      species: json['species'],
+      image: json['image'],
+    );
+  }
+  //Finalmente convierte los datos de una cadena tipo string en un map, extrae la lista de persoanjes del mapa los cuales estan en formato JSON
+}
+
+// Función para obtener los personajes de la API de Rick and Morty
+//html.HttpRequest.getString realiza una solicitud HTTP GET a la URL especificada y devuelve el contenido como una cadena.
+Future<List<CharacterWithFormatting>> fetchCharacters() async {
+  final response = await html.HttpRequest.getString('https://rickandmortyapi.com/api/character');
+  Map<String, dynamic> data = jsonDecode(response);
+
+  List<dynamic> charactersJson = data['results'];
+
+  //"CharacterWithFormatting" aplica la conversión a cada elemento y el .toList convierte la lista iterable en  una lista de instancias de tipo "CharacterWithFormatting"
+  return charactersJson.map((characterJson) {
+    return CharacterWithFormatting.fromJson(characterJson);
+  }).toList();
+}
+
+void main() async {
+  //Llama a fetchCharacters para obtener la lista de personajes de la API y espera a que se complete la solicitud.
+  List<CharacterWithFormatting> characters = await fetchCharacters();
+
+  // Mostrar los personajes formateados en la consola de DartPad
+  for (var character in characters) {
+    print(character.formattedName(character.name));
+    print(character.statusAndSpecies(character.status, character.species));
+    print('Image: ${character.image}');
+    print('---');
+  }
+}
